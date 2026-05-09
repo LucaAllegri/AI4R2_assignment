@@ -142,12 +142,16 @@
         ;;PACKAGE LOCATION
         (package-at pck1 storage1)
         (package-at pck2 storage3)
+
+        (= (total-cost) 0)
     )
 
     (:goal
         (and
             (package-at pck1 delivery1)
             (package-at pck2 delivery4)
+            (<= (total-cost) 38)
         )
     )
+
 )

@@ -3,7 +3,7 @@
 (define (domain Warehouse_Optional_Conveyor)
 
     ;remove requirements that are not needed
-    (:requirements :strips :typing :negative-preconditions)
+    (:requirements :strips :typing :negative-preconditions :action-costs)
 
     (:types
         location
@@ -23,6 +23,10 @@
         (unload-zone ?l - location)
     )
 
+    (:functions
+        (total-cost)
+    )
+
     (:action move
         :parameters (?r - robot ?from ?to - location)
         :precondition (and (connected ?from ?to)
@@ -30,6 +34,7 @@
                       )
         :effect (and (not (robot-at ?r ?from))
                      (robot-at ?r ?to)
+                     (increase (total-cost) 2)
                 )
     )
 
@@ -43,6 +48,7 @@
         :effect (and (not (handempty ?r))
                      (holding ?r ?p)
                      (not (package-at ?p ?l))
+                     (increase (total-cost) 1)
                 )
     )
 
@@ -54,6 +60,7 @@
         :effect (and (handempty ?r)
                      (not (holding ?r ?p))
                      (package-at ?p ?l)
+                     (increase (total-cost) 1)
                 )
     )
 
@@ -67,6 +74,7 @@
                      (on-belt ?p)
                      (handempty ?r)
                      (not (holding ?r ?p))
+                     (increase (total-cost) 1)
                 )
     )
 
@@ -78,6 +86,7 @@
                       )
         :effect (and (not (package-at ?p ?from))
                      (package-at ?p ?to)
+                     (increase (total-cost) 0)
                 )
     )
 
@@ -93,6 +102,7 @@
                      (not (package-at ?p ?l))
                      (not (on-belt ?p))
                      (not (handempty ?r))
+                     (increase (total-cost) 1)
                 )
     )
 
