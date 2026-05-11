@@ -1,5 +1,3 @@
-;Header and description
-
 (define (domain PDDL_Warehouse_Conveyor)
 
     ;remove requirements that are not needed
