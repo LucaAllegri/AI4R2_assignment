@@ -150,7 +150,7 @@
         (and
             (package-at pck1 delivery1)
             (package-at pck2 delivery4)
-            (< (total-cost) 50)
+            (< (total-cost) 45)
         )
     )
 
