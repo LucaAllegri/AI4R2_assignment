@@ -4,7 +4,7 @@
     (:objects 
         r1 r2 r3 r4 r5 r6 r7 - robot
 
-        storage l1 l2 l3 l4
+        storage1 l1 l2 l3 storage2
         l5 l6 l7 l8 l9 l10 l11
         l12 l13 l14 l15 l16 l17 l18
         l19 l20 l21 l22 l23 l24 l25
@@ -21,10 +21,10 @@
     (:init
 
         ;; BELT SEGMENTS OF THE CONVEYORS
-        (belt-segment cMain storage l1)
+        (belt-segment cMain storage1 l1)
         (belt-segment cMain l1 l2)
         (belt-segment cMain l2 l3)
-        (belt-segment cMain l3 l4)
+        (belt-segment cMain l3 storage2)
 
         (belt-segment cRight l5 l6)
         (belt-segment cRight l6 l7)
@@ -46,7 +46,7 @@
         (belt-segment cBackR l15 l16)
         (belt-segment cBackR l16 l17)
         (belt-segment cBackR l17 l18)
-        (belt-segment cBackR l18 storage)
+        (belt-segment cBackR l18 storage1)
 
         (belt-segment cBackL l26 l27)
         (belt-segment cBackL l27 l28)
@@ -54,11 +54,11 @@
         (belt-segment cBackL l29 l30)
         (belt-segment cBackL l30 l31)
         (belt-segment cBackL l31 l32)
-        (belt-segment cBackR l32 storage)
+        (belt-segment cBackL l32 storage1)
         ;;---------------------------------
 
         ;; CONVEYOR ENTRIES
-        (conveyor-entry cMain storage)
+        (conveyor-entry cMain storage1)
         (conveyor-entry cRight l5)
         (conveyor-entry cLeft l19)
         (conveyor-entry cBackR l12)
@@ -66,16 +66,22 @@
         ;;---------------------------------
 
         ;; CONVEYOR EXITS
-        (conveyor-exit cMain l4)
+        (conveyor-exit cMain storage2)
         (conveyor-exit cRight l11)
         (conveyor-exit cLeft l25)
-        (conveyor-exit cBackR l18)
-        (conveyor-exit cBackL l32)
+        (conveyor-exit cBackR storage1)
+        (conveyor-exit cBackL storage1)
+        ;;---------------------------------
+
+        ;;CONVEYOR CONNECTED
+        (conveyor-connected cRight cBackR l11 l12)
+        (conveyor-connected cLeft cBackL l25 l26)
+        (conveyor-connected cBackR cMain storage1 storage1)
+        (conveyor-connected cBackL cMain storage1 storage1)
         ;;---------------------------------
 
         ;; UNLOADING ZONES
-        (unload-zone storage)
-        (unload-zone l4)
+        (unload-zone storage2)
         (unload-zone l7)
         (unload-zone l9)
         (unload-zone l11)
@@ -85,11 +91,8 @@
         ;;---------------------------------
 
         ;; PICKING ZONES
-        (load-zone storage)
         (load-zone l5)
         (load-zone l19)
-        (load-zone l12)
-        (load-zone l26)
         ;;---------------------------------
 
         ;; DELIVERY ZONES
@@ -108,7 +111,7 @@
         ;;---------------------------------
 
         ;; ROBOT ACTION ZONES
-        (robot-act-on r1 l4)
+        (robot-act-on r1 storage2)
         (robot-act-on r1 l5)
         (robot-act-on r1 l19)
         (robot-act-on r2 l7)
@@ -140,7 +143,7 @@
         ;;---------------------------------
 
         ;; INITIAL ROBOT POSITIONS
-        (robot-at r1 l4)
+        (robot-at r1 storage2)
         (robot-at r2 l7)
         (robot-at r3 l9)
         (robot-at r4 l11)
@@ -158,16 +161,19 @@
         ;;---------------------------------
 
         ;; INITIAL PACKAGE POSITIONS
-        (package-at p1 storage)
-        (package-at p2 storage)
-        (package-at p3 storage)
-        (package-at p4 storage)
-        (package-at p5 storage)
+        (package-at p1 storage1)
+        (on-belt p1 cMain)
+
+        (package-at p2 l3)
+        (on-belt p2 cMain)
+
+        ;(package-at p2 l3)
+        ;(on-belt p2 cMain)
         ;;---------------------------------
 
         ;; BELT FREE
         ;; cMain
-        (belt-free l1) (belt-free l2) (belt-free l3) (belt-free l4)
+        (belt-free l1) (belt-free l2) (belt-free l3) (belt-free storage2)
 
         ;; cRight
         (belt-free l5)  (belt-free l6)  (belt-free l7)  (belt-free l8)
@@ -184,6 +190,12 @@
         ;; cBackL
         (belt-free l26) (belt-free l27) (belt-free l28) (belt-free l29)
         (belt-free l30) (belt-free l31) (belt-free l32)
+
+        (belt-running cMain)
+        (belt-running cRight)
+        (belt-running cLeft)
+        (belt-running cBackR)
+        (belt-running cBackL)
         ;;---------------------------------
 
         ;; NUMERIC INITIALIZATION
@@ -194,8 +206,8 @@
         (= (belt-progress p5) 0.0)
 
         (= (conveyor-speed cMain)  1.0)
-        (= (conveyor-speed cRight) 1.5)
-        (= (conveyor-speed cLeft)  1.5)
+        (= (conveyor-speed cRight) 1.0)
+        (= (conveyor-speed cLeft)  1.0)
         (= (conveyor-speed cBackR) 1.0)
         (= (conveyor-speed cBackL) 1.0)
 
@@ -207,6 +219,8 @@
 
     (:goal (and
         (package-at p1 delivery2)
+        (package-at p2 delivery8)
+        
     ))
 
     (:metric minimize (total-cost))
