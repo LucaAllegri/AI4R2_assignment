@@ -42,8 +42,7 @@
         ;; zones
         (load-zone ?l - location)
         (unload-zone ?l - location)
-        (delivery-zone ?l - location)       
-
+        (delivery-zone ?l - location)    
     )
 
 
@@ -53,105 +52,97 @@
         (total-cost)
     )
 
-    ;: ROBOT1 PICK FROM STORAGE2 
-    (:action pick-from-storage
-        :parameters (?r - robot ?pck - package ?l - location)
+    ;; GRASP from the last location of the main conveyor (storage2)
+    (:action grasp
+        :parameters (?r - robot ?p - package ?l - location ?c - conveyor)
         :precondition (and (robot-at ?r ?l)
                            (robot-act-on ?r ?l)
-                           (package-at ?pck ?l)
+                           (package-at ?p ?l)
                            (handempty ?r)
                            (unload-zone ?l)
-                           (not (exists (?c - conveyor) (on-belt ?pck ?c)))
+                           (on-belt      ?p ?c)
+                           (conveyor-exit ?c ?l)                  
         )
-        :effect (and (holding ?r ?pck)
-                     (not (package-at ?pck ?l))
+        :effect (and (holding ?r ?p)
+                     (not (package-at ?p ?l))
                      (not (handempty ?r))
-                     (increase (total-cost) 1)
-        )
-            
-    )
-
-    ;; ROBOT2to7 retrive packages moving on the belt
-    (:action retrieve
-        :parameters (?r - robot ?pck - package ?l - location ?c - conveyor)
-        :precondition (and (robot-at ?r ?l)
-                           (robot-act-on ?r ?l)
-                           (package-at ?pck ?l)
-                           (on-belt ?pck ?c)
-                           (handempty ?r)
-                           (unload-zone ?l)
-        )
-        :effect (and (holding ?r ?pck)
-                     (not (package-at ?pck ?l))
-                     (not (handempty ?r))
-                     (not (on-belt ?pck ?c))
+                     (not (on-belt ?p ?c))
                      (belt-free ?l)
                      (increase (total-cost) 1)
         )
     )
 
-
-    ;; ROBOT change from a configuration to another one
-    ;(:action manipulate
-    ;    :parameters (?r - robot ?pck - package ?from ?to - location)
-    ;    :precondition (and (robot-at ?r ?from)
-    ;                       (holding ?r ?pck)
-    ;                       (robot-act-on ?r ?to)
-    ;    )
-    ;    :effect (and (robot-at ?r ?to)
-    ;                 (not (robot-at ?r ?from))
-    ;                 (not (handempty ?r))
-    ;                 (holding ?r ?pck)              
-    ;    )
-    ;)  
-
-    ;; Robot load the conveyor with a package into the load-zone
+    ;; action for the robot1 to load-conveyor Right or Left
     (:action load-conveyor
-        :parameters (?r - robot ?pck - package ?from ?to - location ?c - conveyor)
-        :precondition (and (robot-at ?r ?from)
-                           (robot-act-on ?r ?from)
-                           (robot-act-on ?r ?to)
-                           (holding ?r ?pck)
-                           (belt-free ?to)
-                           (load-zone ?to)
-                           (conveyor-entry ?c ?to)
+        :parameters (?r - robot ?p - package ?l - location ?c - conveyor)
+        :precondition (and (robot-at ?r ?l)
+                           (robot-act-on ?r ?l)
+                           (holding ?r ?p)
+                           (belt-free ?l)
+                           (load-zone ?l)
+                           (conveyor-entry ?c ?l)
                            (belt-running ?c)
         )
-        :effect (and (not (holding ?r ?pck))
-                     (package-at ?pck ?to)
-                     (on-belt ?pck ?c)
+        :effect (and (not (holding ?r ?p))
+                     (package-at ?p ?l)
+                     (on-belt ?p ?c)
                      (handempty ?r)
-                     (not (belt-free ?to))
-                     (assign (belt-progress ?pck) 0.0)
+                     (not (belt-free ?l))
+                     (assign (belt-progress ?p) 0.0)
                      (increase (total-cost) 1)
         )
     )
 
-    ;; Robot deliver the package into the correct delivery zone
+    ;; ROBOT2to7 INTERCEPT a package that is running on the belt
+    (:action intercept
+        :parameters (?r - robot ?p - package ?l - location ?c - conveyor)
+        :precondition (and (robot-at ?r ?l)
+                           (robot-act-on ?r ?l)
+                           (package-at ?p ?l)
+                           (on-belt ?p ?c)
+                           (handempty ?r)
+                           (unload-zone ?l)
+                           (not (conveyor-exit  ?c ?l))
+                           (not (conveyor-entry ?c ?l))
+        )
+        :effect (and (holding ?r ?p)
+                     (not (package-at ?p ?l))
+                     (not (handempty ?r))
+                     (not (on-belt ?p ?c))
+                     (belt-free ?l)
+                     (increase (total-cost) 1)
+        )
+    )
+
     (:action deliver
-    :parameters (?r - robot ?pck - package ?l-robot - location ?l-dest - location)
-    :precondition (and (robot-at ?r ?l-robot)
-                       (robot-act-on ?r ?l-robot)
-                       (holding ?r ?pck)
-                       (delivery-zone ?l-dest)
+        :parameters (?r - robot ?p - package ?l - location)
+        :precondition (and (robot-at ?r ?l)
+                           (robot-act-on ?r ?l)
+                           (holding ?r ?p)
+                           (delivery-zone ?l)
+        )
+        :effect (and (not (holding ?r ?p))
+                     (package-at ?p ?l)
+                     (handempty ?r)
+                     (increase (total-cost) 1)
+        )
     )
-    :effect (and (not (holding ?r ?pck))
-                 (package-at ?pck ?l-dest)
-                 (handempty ?r)
-                 (increase (total-cost) 1)
+    
+    ;; ROBOT change from a configuration to another one
+    (:action manipulate
+        :parameters (?r - robot ?from ?to - location)
+        :precondition (and (robot-at ?r ?from)
+                           (robot-act-on ?r ?from)
+                           (robot-act-on ?r ?to)
+                           (not (= ?from ?to))
+        )
+        :effect (and (robot-at ?r ?to)
+                     (not (robot-at ?r ?from))
+                     (increase (total-cost) 4)
+        )
     )
-)
 
-    ;(:process conveyor-motion
-    ;    :parameters (?c - conveyor)
-    ;    :precondition (belt-running ?c)
-    ;    :effect (and 
-    ;        ;(increase (belt-displacement ?c) (* #t (conveyor-speed ?c)))
-    ;        (increase (total-cost) (* #t 0.1)) 
-    ;    )
-    ;)
-
-    ;;continuous movement of the package 
+    ;; continuous movement of the package 
     (:process package-movement
         :parameters (?p - package ?c - conveyor)
         :precondition (and (on-belt ?p ?c) 
@@ -198,7 +189,4 @@
                      (assign (belt-progress ?p) 0)
         )
     )
-    
-    
-
 )

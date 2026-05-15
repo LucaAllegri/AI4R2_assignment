@@ -115,31 +115,23 @@
         (robot-act-on r1 l5)
         (robot-act-on r1 l19)
         (robot-act-on r2 l7)
+        (robot-act-on r2 delivery1)
+        (robot-act-on r2 delivery2)
         (robot-act-on r3 l9)
+        (robot-act-on r3 delivery3)
+        (robot-act-on r3 delivery4)
         (robot-act-on r4 l11)
+        (robot-act-on r4 delivery5)
+        (robot-act-on r4 delivery6)
         (robot-act-on r5 l21)
+        (robot-act-on r5 delivery7)
+        (robot-act-on r5 delivery8)
         (robot-act-on r6 l23)
+        (robot-act-on r6 delivery9)
+        (robot-act-on r6 delivery10)
         (robot-act-on r7 l25)
-        ;;---------------------------------
-
-        ;; SERVES RELATIONS
-        (serves l7 delivery1)
-        (serves l7 delivery2)
-
-        (serves l9 delivery3)
-        (serves l9 delivery4)
-
-        (serves l11 delivery5)
-        (serves l11 delivery6)
-
-        (serves l21 delivery7)
-        (serves l21 delivery8)
-
-        (serves l23 delivery9)
-        (serves l23 delivery10)
-
-        (serves l25 delivery11)
-        (serves l25 delivery12)
+        (robot-act-on r7 delivery11)
+        (robot-act-on r7 delivery12)
         ;;---------------------------------
 
         ;; INITIAL ROBOT POSITIONS
@@ -161,19 +153,16 @@
         ;;---------------------------------
 
         ;; INITIAL PACKAGE POSITIONS
-        (package-at p1 storage1)
+        (package-at p1 l2)
         (on-belt p1 cMain)
 
         (package-at p2 l3)
         (on-belt p2 cMain)
-
-        ;(package-at p2 l3)
-        ;(on-belt p2 cMain)
         ;;---------------------------------
 
         ;; BELT FREE
         ;; cMain
-        (belt-free l1) (belt-free l2) (belt-free l3) (belt-free storage2)
+        (belt-free l1) (belt-free storage1) (belt-free storage2)
 
         ;; cRight
         (belt-free l5)  (belt-free l6)  (belt-free l7)  (belt-free l8)
@@ -219,7 +208,7 @@
 
     (:goal (and
         (package-at p1 delivery2)
-        (package-at p2 delivery8)
+        (package-at p2 delivery2)
         
     ))
 
