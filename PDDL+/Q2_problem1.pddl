@@ -15,7 +15,7 @@
 
         cMain cRight cLeft cBackR cBackL - conveyor
 
-        p1 p2 p3 p4 p5 - package 
+        p1 p2 - package 
     )
 
     (:init
@@ -69,15 +69,15 @@
         (conveyor-exit cMain storage2)
         (conveyor-exit cRight l10)
         (conveyor-exit cLeft l24)
-        (conveyor-exit cBackR storage1)
-        (conveyor-exit cBackL storage1)
+        (conveyor-exit cBackR l17)
+        (conveyor-exit cBackL l31)
         ;;---------------------------------
 
         ;;CONVEYOR CONNECTED
         (conveyor-connected cRight cBackR l10 l11)
         (conveyor-connected cLeft cBackL l24 l25)
-        (conveyor-connected cBackR cMain storage1 storage1)
-        (conveyor-connected cBackL cMain storage1 storage1)
+        (conveyor-connected cBackR cMain l17 storage1)
+        (conveyor-connected cBackL cMain l31 storage1)
         ;;---------------------------------
 
         ;; UNLOADING ZONES
@@ -158,21 +158,28 @@
         (package-at p1 l4)
         (on-belt p1 cRight)
 
-        (package-at p2 l5)
-        (on-belt p2 cRight)
+        (package-at p2 l2)
+        (on-belt p2 cMain)
+
         ;;---------------------------------
 
         ;; BELT FREE
         ;; cMain
-        (belt-free l1) (belt-free l2) (belt-free l3) (belt-free storage2)
+        (belt-free storage1) 
+        (belt-free l1) 
+        ;(belt-free l2) 
+        (belt-free l3) (belt-free storage2)
 
         ;; cRight
-        ;(belt-free l4)  (belt-free l5)  
+        ;(belt-free l4)  
+        (belt-free l5)  
         (belt-free l6)  (belt-free l7)
         (belt-free l8)  (belt-free l9) (belt-free l10)
 
         ;; cLeft
-        (belt-free l18) (belt-free l19) (belt-free l20) (belt-free l21)
+        (belt-free l18) 
+        (belt-free l19) 
+        (belt-free l20) (belt-free l21)
         (belt-free l22) (belt-free l23) (belt-free l24)
 
         ;; cBackR
@@ -191,19 +198,20 @@
         ;;---------------------------------
 
         ;; NUMERIC INITIALIZATION
+        (= (total-cost) 0)
+
+        ;; Progressi iniziali dei pacchi sul segmento attuale
         (= (belt-progress p1) 0.0)
         (= (belt-progress p2) 0.0)
-        (= (belt-progress p3) 0.0)
-        (= (belt-progress p4) 0.0)
-        (= (belt-progress p5) 0.0)
 
-        (= (conveyor-speed cMain)  1.0)
-        (= (conveyor-speed cRight) 1.0)
-        (= (conveyor-speed cLeft)  1.0)
-        (= (conveyor-speed cBackR) 1.0)
-        (= (conveyor-speed cBackL) 1.0)
+        ;; Velocità dei singoli conveyor (indica quanto progresso fanno al secondo)
+        (= (conveyor-speed cMain)  0.8)
+        (= (conveyor-speed cRight) 0.8)
+        (= (conveyor-speed cLeft)  0.8)
+        (= (conveyor-speed cBackR) 0.8)
+        (= (conveyor-speed cBackL) 0.8)
 
-        ;; busy-timer inizia a 0 per tutti i robot (non occupati)
+        ;; I timer di occupazione dei robot partono tutti a 0.0 (pronti ad agire)
         (= (busy-timer r1) 0.0)
         (= (busy-timer r2) 0.0)
         (= (busy-timer r3) 0.0)
@@ -211,13 +219,6 @@
         (= (busy-timer r5) 0.0)
         (= (busy-timer r6) 0.0)
         (= (busy-timer r7) 0.0)
-
-        ;; DURATE DELLE AZIONI
-        (= (grasp-time)      0.5)
-        (= (manipulate-time) 2.0)
-        (= (deliver-time)    0.5)
-
-        (= (total-cost) 0)
         ;;---------------------------------
 
     )
@@ -225,8 +226,7 @@
 
     (:goal (and
         (package-at p1 delivery2)
-        (package-at p2 delivery2)
-        
+        (package-at p2 delivery12)
     ))
 
     (:metric minimize (total-cost))
