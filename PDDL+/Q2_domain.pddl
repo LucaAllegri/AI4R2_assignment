@@ -25,8 +25,6 @@
         (conveyor-exit ?c - conveyor ?l - location)
         (belt-free ?l - location)
         (belt-running ?c - conveyor)
-
-        ;; automatic connection between conveyors: if the exit of a conveyor is in the same location of the entry of another conveyor, then they are connected
         (conveyor-connected ?c1 - conveyor ?c2 - conveyor ?l1 - location ?l2 - location)
         
         ;; robot state

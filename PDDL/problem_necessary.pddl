@@ -156,7 +156,7 @@
         (and
             (package-at pck1 delivery1)
             (package-at pck2 delivery4)
-            (< (total-cost) 49)
+            ;(< (total-cost) 49)
         )
     )
 
