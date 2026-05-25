@@ -1,24 +1,71 @@
-# Assignment D3-V6: Warehouse Robotics – Con-veyor Belt Dynamics
 
-PDDL - optional use of conveyor-belts
+# Assignment D3-V6: Warehouse Robotics – Con-veyor Belt Dynamics
+This assignment targets automated logistics scheduling by modeling interactions between mobile manipulator robots and autonomous conveyor belts within a warehouse environment.
+
+The goal is to generate valid, optimized plans that allow robots to navigate a topology graph, pick/drop items, and place or retrieve packages from autonomous conveyor belts.
+
+The approach follows two methodologies:
+
+- Q1 (Classical PDDL): A discrete approximation model utilizing action costs.
+
+- Q2 (PDDL+): A continuous-time model using numerical fluents, linear processes, and events to capture real-time conveyor physics.
+
+## PDDL 
+The logic behind the PDDL model is that the continuous nature of the conveyor is discretized through the conveyor-step action, moving a package forward by one cell at a cost of 0. This contrasts with the robot's move action, which incurs a cost of 2 to incentivize using the conveyor belt whenever computationally optimal.
+
+Action used: 
+- move $\rightarrow$ for the robot moving within the warehouse
+- pick $\rightarrow$ from the storage areas
+- place $\rightarrow$ on delivery areas
+- retrive $\rightarrow$ on conveyor belts end segment
+- load-conveyor $\rightarrow$ used by the robot to put packages at the start of the conveyor belts
+- conveyor-step $\rightarrow$ action to simulate the package move on the conveyor balts
+
+Two different scenario:
+- **Optional Conveyor Use**: Robot can deliver packages either by walking along the grid or using the conveyor network. 
 <p align="center">
   <img src="warehouse_images/optional_environment.jpeg" width="800">
 </p>
 
+**The results** obtain are: 
 
-PDDL - necessary use of conveyor-belts
+The satisfiable plan obtain by the planner: 
+
 <p align="center">
-  <img src="warehouse_images/necessary_environment.jpeg" width="800">
+  <img src="warehouse_images/plan_optional.png" width="300" alt="Plan Optional">
+  <img src="warehouse_images/cost_optional.png" width="300" alt="Cost Optional">
 </p>
 
+The optimal plan, found by test (because the planner doesn't use :metric minimize): 
 
-PDDL+ - easier problem
+<p align="center">
+  <img src="warehouse_images/plan_optional_optimal.png" width="300" alt="Plan Optional">
+  <img src="warehouse_images/cost_optional_optimal.png" width="300" alt="Cost Optional">
+</p>
+
+(TO obtain this result dis-comment the row 153 on problem file)
+
+**How to Run the PDDL Model**: 
+on visualstudio:
+1) press on problem.pddl file
+2) on the list that comes out select: "PDDL: run del planner and display the plan"
+3) select the BFWS or ENHSP planner
+
+
+## PDDL +
+The PDDL+ domain shifts from static steps to linear functions over continuous time.
+For PDDL+ is drown the same scenario but with two different initializations and final goals: 
+- **Easier Scenario**: 2 packages
 <p align="center">
   <img src="warehouse_images/pddl+_2pck.jpeg" width="1500">
 </p>
 
+- **Harder Scenario**: 4 packages
 
-PDDL+ - harder problem
 <p align="center">
   <img src="warehouse_images/pddl+_4pck.jpeg" width="1500">
 </p>
+
+
+```bash
+```
