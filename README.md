@@ -1,6 +1,5 @@
 # Assignment D3-V6: Warehouse Robotics – Con-veyor Belt Dynamics
 
-
 PDDL - optional use of conveyor-belts
 <p align="center">
   <img src="warehouse_images/optional_environment.jpeg" width="800">
