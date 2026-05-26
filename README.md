@@ -36,17 +36,42 @@ The satisfiable plan obtain by the planner:
   <img src="warehouse_images/cost_optional.png" width="300" alt="Cost Optional">
 </p>
 
-The optimal plan, found by test (because the planner doesn't use :metric minimize): 
+The optimal plan, found by test (because the planner does not take into consideration :metric minimize): 
 
 <p align="center">
   <img src="warehouse_images/plan_optional_optimal.png" width="300" alt="Plan Optional">
   <img src="warehouse_images/cost_optional_optimal.png" width="300" alt="Cost Optional">
 </p>
 
-(TO obtain this result dis-comment the row 153 on problem file)
+(To obtain this result dis-comment the row 153 on problem_optional.pddl file)
 
-**How to Run the PDDL Model**: 
-on visualstudio:
+- **Necessary Conveyor Use**: The map topology presents disconnected components; the conveyor belt acts as the unique bridge between isolated robots
+
+<p align="center">
+  <img src="warehouse_images/necessary_environment.jpeg" width="800">
+</p>
+
+**The results** obtain are: 
+
+The satisfiable plan obtain by the planner: 
+
+<p align="center">
+  <img src="warehouse_images/plan_necessary.png" width="300" alt="Plan Optional">
+  <img src="warehouse_images/cost_necessary.png" width="300" alt="Cost Optional">
+</p>
+
+The optimal plan, found by test (because the planner does not take into consideration :metric minimize): 
+
+<p align="center">
+  <img src="warehouse_images/plan_necessary_optimal.png" width="300" alt="Plan Optional">
+  <img src="warehouse_images/cost_necessary_optimal.png" width="300" alt="Cost Optional">
+</p>
+
+(To obtain this result dis-comment the row 159 on problem_necessary.pddl file)
+
+**How to Run the PDDL Models**
+
+On visual studio:
 1) press on problem.pddl file
 2) on the list that comes out select: "PDDL: run del planner and display the plan"
 3) select the BFWS or ENHSP planner
@@ -54,10 +79,29 @@ on visualstudio:
 
 ## PDDL +
 The PDDL+ domain shifts from static steps to linear functions over continuous time.
+
+Processes used: 
+- package-movement $\rightarrow$ models the continuous movement of a package along a running conveyor belt segment
+- robot-timers $\rightarrow$ keeps track of the time a robot spends working on an action, increasing a timer fluent until the task is completed
+
+Events used: 
+- free-robot $\rightarrow$ triggers as soon as a robot finishes its task timer, making the robot free and ready to take on a new job
+- advance-segment $\rightarrow$ triggers automatically the exact instant a package reaches a progress threshold of 1.0, instantly transferring it to the next adjacent cell of the conveyor belt and resetting its progress fluent to 0.0
+- reach-exit $\rightarrow$ handles the autonomous routing when a package reaches the end of a conveyor segment and automatically transitions onto an interconnected conveyor belt
+
+
+
 For PDDL+ is drown the same scenario but with two different initializations and final goals: 
 - **Easier Scenario**: 2 packages
 <p align="center">
   <img src="warehouse_images/pddl+_2pck.jpeg" width="1500">
+</p>
+
+
+**The result** obtain is: 
+<p align="center">
+  <img src="warehouse_images/plan_pddl+_easy.png" width="300" alt="Plan Optional">
+  <img src="warehouse_images/cost_plan_pddl+_easy.png" width="300" alt="Cost Optional">
 </p>
 
 - **Harder Scenario**: 4 packages
@@ -66,6 +110,23 @@ For PDDL+ is drown the same scenario but with two different initializations and 
   <img src="warehouse_images/pddl+_4pck.jpeg" width="1500">
 </p>
 
+**The result** obtain is: 
+<p align="center">
+  <img src="warehouse_images/plan_pddl+_hard.png" width="300" alt="Plan Optional">
+  <img src="warehouse_images/cost_plan_pddl+_hard.png" width="300" alt="Cost Optional">
+</p>
 
+**How to Run the PDDL+ Models**
+
+On your terminal, before runnning the planner is necessary going into enhsp folder:
 ```bash
+cd enhsp
+```
+- to run the easier problem:
+```bash
+ java -jar enhsp.jar -o ../PDDL+/Q2_domain.pddl -f ../PDDL+/Q2_problem1.pddl
+```
+- to run the harder problem:
+```bash
+ java -jar enhsp.jar -o ../PDDL+/Q2_domain.pddl -f ../PDDL+/Q2_problem2.pddl
 ```
