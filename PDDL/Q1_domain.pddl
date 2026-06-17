@@ -34,7 +34,7 @@
                       )
         :effect (and (not (robot-at ?r ?from))
                      (robot-at ?r ?to)
-                     (increase (total-cost) 2)
+                     (increase (total-cost) 4)
                 )
     )
 
